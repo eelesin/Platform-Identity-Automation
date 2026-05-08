@@ -43,6 +43,9 @@ jobs:
         run: |
           cd terraform
           terraform init
+          terraform import azurerm_resource_group.rg /subscriptions/${{ secrets.SUBSCRIPTION_ID }}/resourceGroups/provision-user-rg || true
+          terraform import azurerm_container_registry.acr /subscriptions/${{ secrets.SUBSCRIPTION_ID }}/resourceGroups/provision-user-rg/providers/Microsoft.ContainerRegistry/registries/${{ secrets.ACR_NAME }} || true
+          terraform import azurerm_container_group.aci /subscriptions/${{ secrets.SUBSCRIPTION_ID }}/resourceGroups/provision-user-rg/providers/Microsoft.ContainerInstance/containerGroups/provision-user || true
           terraform apply -auto-approve
         env:
           ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
