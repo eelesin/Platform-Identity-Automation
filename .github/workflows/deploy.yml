@@ -35,6 +35,9 @@ jobs:
         run: |
           docker build -t ${{ secrets.ACR_NAME }}.azurecr.io/provision-user:${{ github.sha }} .
           docker push ${{ secrets.ACR_NAME }}.azurecr.io/provision-user:${{ github.sha }}
+      
+      - name: Setup   Terraform
+        uses: hashicorp/setup-terraform@v3
 
       - name: Terraform init and apply
         run: |
