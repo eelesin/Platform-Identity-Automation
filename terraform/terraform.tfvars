@@ -1,0 +1,8 @@
+resource_group_name = "provision-user-rg"
+location            = "westus2"
+acr_name            = "provisionuseracr"
+container_name      = "provision-user"
+image_name          = "provisionuseracr.azurecr.io/provision-user:1.0"
+subscription_id     = "f47a5351-466e-4e37-8cf4-37dc52d8031a"
+acr_username        = "provisionuseracr"
+acr_password        = "AXVoCgskhvtRD3YCHeVSeHTSOKNs9oBNy9ORCt8i7zlJn2M0UoebJQQJ99CEAC8vTInEqg7NAAACAZCRqqQf"
