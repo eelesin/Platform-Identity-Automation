@@ -10,12 +10,12 @@ variable "acr_name" {
   default = "provisionuseracr"
 }
 
-variable "image_name" {
-  description = "Full image name with tag"
+variable "container_name" {
+  default = "provision-user"
 }
 
 variable "image_name" {
-  default = "provisionuseracr.azurecr.io/provision-user:1.0"
+  description = "Full image name with tag"
 }
 
 variable "subscription_id" {
