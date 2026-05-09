@@ -51,7 +51,6 @@ jobs:
             -var="acr_username=${{ secrets.ACR_USERNAME }}" \
             -var="image_name=${{ secrets.ACR_NAME }}.azurecr.io/provision-user:${{ github.sha }}" \
             -var="jira_url=${{ secrets.JIRA_URL }}" \
-            -var="jira_url=${{ secrets.JIRA_URL }}" \
             -var="jira_email=${{ secrets.JIRA_EMAIL }}" \
             -var="jira_api_token=${{ secrets.JIRA_API_TOKEN }}" \
             -var="graph_tenant_id=${{ secrets.GRAPH_TENANT_ID }}" \
