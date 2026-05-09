@@ -104,11 +104,17 @@ def main():
      print(f"Processing {len(new_hires_file)} new hires...\n")
 
      for hire in new_hires_file:
-          result = provision_user(
+          try:
+               
+           result = provision_user(
                hire["name"],
                hire["email"],
                hire["role"]
-          )
+           )
+           print(f"✅ Success: {hire['name']} — {result}")
+          except Exception as e:
+              print(f"Failed: {hire['name']} - {str(e)}")
+
         
     
                
