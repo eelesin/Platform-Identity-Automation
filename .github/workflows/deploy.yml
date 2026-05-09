@@ -35,37 +35,30 @@ jobs:
         run: |
           docker build -t ${{ secrets.ACR_NAME }}.azurecr.io/provision-user:${{ github.sha }} .
           docker push ${{ secrets.ACR_NAME }}.azurecr.io/provision-user:${{ github.sha }}
-      
-      - name: Setup   Terraform
+
+      - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform init and apply
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
+          ARM_CLIENT_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).clientId }}
+          ARM_CLIENT_SECRET: ${{ fromJson(secrets.AZURE_CREDENTIALS).clientSecret }}
+          ARM_TENANT_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
+          TF_VAR_acr_password: ${{ secrets.ACR_PASSWORD }}
+          TF_VAR_acr_username: ${{ secrets.ACR_USERNAME }}
+          TF_VAR_image_name: "${{ secrets.ACR_NAME }}.azurecr.io/provision-user:${{ github.sha }}"
+          TF_VAR_jira_url: ${{ secrets.JIRA_URL }}
+          TF_VAR_jira_email: ${{ secrets.JIRA_EMAIL }}
+          TF_VAR_jira_api_token: ${{ secrets.JIRA_API_TOKEN }}
+          TF_VAR_graph_tenant_id: ${{ secrets.GRAPH_TENANT_ID }}
+          TF_VAR_graph_client_id: ${{ secrets.GRAPH_CLIENT_ID }}
+          TF_VAR_graph_client_secret: ${{ secrets.GRAPH_CLIENT_SECRET }}
+          TF_VAR_subscription_id: ${{ secrets.SUBSCRIPTION_ID }}
         run: |
           cd terraform
           terraform init
           terraform import azurerm_resource_group.rg /subscriptions/${{ secrets.SUBSCRIPTION_ID }}/resourceGroups/provision-user-rg || true
           terraform import azurerm_container_registry.acr /subscriptions/${{ secrets.SUBSCRIPTION_ID }}/resourceGroups/provision-user-rg/providers/Microsoft.ContainerRegistry/registries/${{ secrets.ACR_NAME }} || true
           terraform import azurerm_container_group.aci /subscriptions/${{ secrets.SUBSCRIPTION_ID }}/resourceGroups/provision-user-rg/providers/Microsoft.ContainerInstance/containerGroups/provision-user || true
-          terraform apply -auto-approve \
-            -var="acr_password=${{ secrets.ACR_PASSWORD }}" \
-            -var="acr_username=${{ secrets.ACR_USERNAME }}" \
-            -var="image_name=${{ secrets.ACR_NAME }}.azurecr.io/provision-user:${{ github.sha }}" \
-            -var="jira_url=${{ secrets.JIRA_URL }}" \
-            -var="jira_email=${{ secrets.JIRA_EMAIL }}" \
-            -var="jira_api_token=${{ secrets.JIRA_API_TOKEN }}" \
-            -var="graph_tenant_id=${{ secrets.GRAPH_TENANT_ID }}" \
-            -var="graph_client_id=${{ secrets.GRAPH_CLIENT_ID }}" \
-            -var="graph_client_secret=${{ secrets.GRAPH_CLIENT_SECRET }}" \
-            -var="subscription_id=${{ secrets.SUBSCRIPTION_ID }}"
-
-        env:
-          ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
-          ARM_CLIENT_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).clientId }}
-          ARM_CLIENT_SECRET: ${{ fromJson(secrets.AZURE_CREDENTIALS).clientSecret }}
-          ARM_TENANT_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
-          GRAPH_TENANT_ID: ${{ secrets.GRAPH_TENANT_ID }}
-          GRAPH_CLIENT_ID: ${{ secrets.GRAPH_CLIENT_ID }}
-          GRAPH_CLIENT_SECRET: ${{ secrets.GRAPH_CLIENT_SECRET }}
-          JIRA_URL: ${{ secrets.JIRA_URL }}
-          JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
-          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          terraform apply -auto-approve
