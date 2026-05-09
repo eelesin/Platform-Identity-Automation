@@ -7,7 +7,7 @@ from azure.identity import ClientSecretCredential
 
 def get_graph_token():
      tenant_id = os.environ.get("GRAPH_TENANT_ID")
-     client_id = os.environ.get("GRAHP_CLIENT_ID")
+     client_id = os.environ.get("GRAPH_CLIENT_ID")
      client_secret = os.environ.get("GRAPH_CLIENT_SECRET")
 
      credential = ClientSecretCredential(
@@ -16,7 +16,7 @@ def get_graph_token():
           client_secret=client_secret
      )
      token = credential.get_token("https://graph.microsoft.com/.default")
-     return token
+     return token.token
 
 def create_azure_user(name, email, role):
      try:
@@ -43,6 +43,12 @@ def create_azure_user(name, email, role):
           )
           if response.status_code == 201:
                return{"status": "created", "user": email}
+          else:
+              return {
+          "status": "failed",
+          "user": email,
+          "error": response.json()
+     }
           
      except Exception as e:
         return {"status": "failed", "user": email, "error": str(e)}
