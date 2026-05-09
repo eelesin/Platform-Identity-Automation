@@ -91,7 +91,7 @@ def provision_user(name, email, role):
 def new_hires(filename):
      employees = []
       # get absolute path relative to this file
-     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+     base_dir = os.path.dirname(os.path.abspath(__file__))
      filepath = os.path.join(base_dir, "data", filename)
      with open(filepath, encoding="utf-8") as file:
           reader = csv.DictReader(file)
