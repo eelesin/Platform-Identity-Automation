@@ -30,3 +30,29 @@ variable "acr_password" {
   description = "ACR password"
   sensitive   = true
 }
+
+variable "jira_url" {
+  description = "Jira base URL"
+}
+
+variable "jira_email" {
+  description = "Jira email"
+}
+
+variable "jira_api_token" {
+  description = "Jira API token"
+  sensitive   = true
+}
+
+variable "graph_tenant_id" {
+  description = "Azure AD tenant ID"
+}
+
+variable "graph_client_id" {
+  description = "Azure AD client ID"
+}
+
+variable "graph_client_secret" {
+  description = "Azure AD client secret"
+  sensitive   = true
+}

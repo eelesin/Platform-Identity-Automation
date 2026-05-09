@@ -40,16 +40,28 @@ resource "azurerm_container_group" "aci" {
   }
 
   container {
-    name   = var.container_name
-    image  = var.image_name
-    cpu    = "0.5"
-    memory = "1.5"
+  name   = var.container_name
+  image  = var.image_name
+  cpu    = "0.5"
+  memory = "1.5"
 
-    ports {
-      port     = 80
-      protocol = "TCP"
-    }
+  environment_variables = {
+    JIRA_URL      = var.jira_url
+    JIRA_EMAIL    = var.jira_email
   }
+
+  secure_environment_variables = {
+    JIRA_API_TOKEN      = var.jira_api_token
+    GRAPH_TENANT_ID     = var.graph_tenant_id
+    GRAPH_CLIENT_ID     = var.graph_client_id
+    GRAPH_CLIENT_SECRET = var.graph_client_secret
+  }
+
+  ports {
+    port     = 80
+    protocol = "TCP"
+  }
+}
 
   ip_address_type = "Public"
 }
