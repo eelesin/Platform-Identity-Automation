@@ -10,8 +10,8 @@ variable "acr_name" {
   default = "provisionuseracr"
 }
 
-variable "container_name" {
-  default = "provision-user"
+variable "image_name" {
+  description = "Full image name with tag"
 }
 
 variable "image_name" {
