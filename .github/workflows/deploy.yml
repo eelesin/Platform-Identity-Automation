@@ -34,7 +34,10 @@ jobs:
       - name: Docker build and push
         run: |
           docker build -t ${{ secrets.ACR_NAME }}.azurecr.io/provision-user:${{ github.sha }} .
+          docker tag ${{ secrets.ACR_NAME }}.azurecr.io/provision-user:${{ github.sha }} \
+               ${{ secrets.ACR_NAME }}.azurecr.io/provision-user:latest
           docker push ${{ secrets.ACR_NAME }}.azurecr.io/provision-user:${{ github.sha }}
+          docker push ${{ secrets.ACR_NAME }}.azurecr.io/provision-user:latest
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -42,9 +45,9 @@ jobs:
       - name: Terraform init and apply
         env:
           ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
-          ARM_CLIENT_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).clientId }}
-          ARM_CLIENT_SECRET: ${{ fromJson(secrets.AZURE_CREDENTIALS).clientSecret }}
-          ARM_TENANT_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           TF_VAR_acr_password: ${{ secrets.ACR_PASSWORD }}
           TF_VAR_acr_username: ${{ secrets.ACR_USERNAME }}
           TF_VAR_image_name: "${{ secrets.ACR_NAME }}.azurecr.io/provision-user:${{ github.sha }}"
@@ -57,7 +60,8 @@ jobs:
           TF_VAR_subscription_id: ${{ secrets.SUBSCRIPTION_ID }}
         run: |
           cd terraform
-          terraform init
+          terraform init \
+            -backend-config="access_key=${{ secrets.AZURE_STORAGE_KEY }}"
           terraform import azurerm_resource_group.rg /subscriptions/${{ secrets.SUBSCRIPTION_ID }}/resourceGroups/provision-user-rg || true
           terraform import azurerm_container_registry.acr /subscriptions/${{ secrets.SUBSCRIPTION_ID }}/resourceGroups/provision-user-rg/providers/Microsoft.ContainerRegistry/registries/${{ secrets.ACR_NAME }} || true
           terraform import azurerm_container_group.aci /subscriptions/${{ secrets.SUBSCRIPTION_ID }}/resourceGroups/provision-user-rg/providers/Microsoft.ContainerInstance/containerGroups/provision-user || true

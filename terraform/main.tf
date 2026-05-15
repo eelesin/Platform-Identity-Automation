@@ -1,4 +1,11 @@
 terraform {
+  backend "azurerm" {
+    resource_group_name  = "provision-user-rg"
+    storage_account_name = "tfstateprovisioner"
+    container_name       = "tfstate"
+    key                  = "provision-user.tfstate"
+  }
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
